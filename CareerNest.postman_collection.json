@@ -1,0 +1,187 @@
+{
+  "info": {
+    "name": "CareerNest API",
+    "description": "Employers and Job Seekers platform. Run Register Employer and Register Seeker first to capture the two role tokens, then use the job and application requests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "empToken", "value": "" },
+    { "key": "seekToken", "value": "" },
+    { "key": "jobId", "value": "" },
+    { "key": "applicationId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register Employer",
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "var d = pm.response.json();",
+            "if (d.token) { pm.collectionVariables.set('empToken', d.token); }"
+          ] } } ],
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": [ "{{baseUrl}}" ], "path": [ "api", "auth", "register" ] },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Acme HR\",\n  \"email\": \"employer@example.com\",\n  \"password\": \"secret123\",\n  \"phone\": \"+919812345678\",\n  \"role\": \"EMPLOYER\"\n}" }
+          }
+        },
+        {
+          "name": "Register Job Seeker",
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "var d = pm.response.json();",
+            "if (d.token) { pm.collectionVariables.set('seekToken', d.token); }"
+          ] } } ],
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": [ "{{baseUrl}}" ], "path": [ "api", "auth", "register" ] },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Sam Seeker\",\n  \"email\": \"seeker@example.com\",\n  \"password\": \"secret123\",\n  \"phone\": \"+919822222222\",\n  \"role\": \"JOB_SEEKER\"\n}" }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": [ "{{baseUrl}}" ], "path": [ "api", "auth", "login" ] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"employer@example.com\",\n  \"password\": \"secret123\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Jobs",
+      "item": [
+        {
+          "name": "Create job (employer)",
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "var d = pm.response.json();",
+            "if (d.id) { pm.collectionVariables.set('jobId', d.id); }"
+          ] } } ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{empToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/jobs", "host": [ "{{baseUrl}}" ], "path": [ "api", "jobs" ] },
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Senior Java Engineer\",\n  \"description\": \"Spring Boot and MongoDB backend role\",\n  \"location\": \"Bangalore\",\n  \"salary\": \"1800000\",\n  \"deadline\": \"2026-12-31\"\n}" }
+          }
+        },
+        {
+          "name": "Search jobs (location/keyword)",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{seekToken}}" } ],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs?keyword=java&location=Bangalore&page=0&size=10",
+              "host": [ "{{baseUrl}}" ], "path": [ "api", "jobs" ],
+              "query": [
+                { "key": "keyword", "value": "java" },
+                { "key": "location", "value": "Bangalore" },
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get job by id",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{seekToken}}" } ],
+            "url": { "raw": "{{baseUrl}}/api/jobs/{{jobId}}", "host": [ "{{baseUrl}}" ], "path": [ "api", "jobs", "{{jobId}}" ] }
+          }
+        },
+        {
+          "name": "My jobs (employer)",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{empToken}}" } ],
+            "url": { "raw": "{{baseUrl}}/api/jobs/mine", "host": [ "{{baseUrl}}" ], "path": [ "api", "jobs", "mine" ] }
+          }
+        },
+        {
+          "name": "Update job (employer)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{empToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/jobs/{{jobId}}", "host": [ "{{baseUrl}}" ], "path": [ "api", "jobs", "{{jobId}}" ] },
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Senior Java Engineer (remote)\",\n  \"description\": \"Spring Boot and MongoDB backend role, remote friendly\",\n  \"location\": \"Bangalore\",\n  \"salary\": \"2000000\",\n  \"deadline\": \"2026-12-31\"\n}" }
+          }
+        },
+        {
+          "name": "Delete job (employer)",
+          "request": {
+            "method": "DELETE",
+            "header": [ { "key": "Authorization", "value": "Bearer {{empToken}}" } ],
+            "url": { "raw": "{{baseUrl}}/api/jobs/{{jobId}}", "host": [ "{{baseUrl}}" ], "path": [ "api", "jobs", "{{jobId}}" ] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Applications",
+      "item": [
+        {
+          "name": "Apply (seeker)",
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "var d = pm.response.json();",
+            "if (d.id) { pm.collectionVariables.set('applicationId', d.id); }"
+          ] } } ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{seekToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/applications", "host": [ "{{baseUrl}}" ], "path": [ "api", "applications" ] },
+            "body": { "mode": "raw", "raw": "{\n  \"jobId\": \"{{jobId}}\",\n  \"coverLetter\": \"I am keen on this role.\"\n}" }
+          }
+        },
+        {
+          "name": "My applications (seeker)",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{seekToken}}" } ],
+            "url": { "raw": "{{baseUrl}}/api/applications/mine", "host": [ "{{baseUrl}}" ], "path": [ "api", "applications", "mine" ] }
+          }
+        },
+        {
+          "name": "Employer applications (all my jobs)",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{empToken}}" } ],
+            "url": { "raw": "{{baseUrl}}/api/applications/employer", "host": [ "{{baseUrl}}" ], "path": [ "api", "applications", "employer" ] }
+          }
+        },
+        {
+          "name": "Applications for a job (employer)",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{empToken}}" } ],
+            "url": { "raw": "{{baseUrl}}/api/applications/job/{{jobId}}", "host": [ "{{baseUrl}}" ], "path": [ "api", "applications", "job", "{{jobId}}" ] }
+          }
+        },
+        {
+          "name": "Update application status (employer)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{empToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/applications/{{applicationId}}/status", "host": [ "{{baseUrl}}" ], "path": [ "api", "applications", "{{applicationId}}", "status" ] },
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"ACCEPTED\"\n}" }
+          }
+        }
+      ]
+    }
+  ]
+}
