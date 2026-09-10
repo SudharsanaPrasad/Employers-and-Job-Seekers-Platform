@@ -15,14 +15,15 @@ application status change).
 - Frontend: https://employers-and-job-seekers-platform.vercel.app
 - API docs (Swagger): https://employers-and-job-seekers-platform.onrender.com/swagger-ui.html
 
-The backend is on the Render free plan, so if nobody used it for some time the first
-request can take about a minute to start. After that it is fast.
+The backend is on the Render free plan, so it goes to sleep when nobody uses it. The
+first request after that takes about 10 seconds while it starts again. After that a
+normal request takes around one second.
 
 ## Tech Stack
 
 - **Backend:** Java 21, Spring Boot 3.5.16, Spring Security + JWT, Spring Data MongoDB
 - **Database:** MongoDB (Atlas)
-- **SMS:** Twilio (pluggable - disabled and logged until credentials are set)
+- **SMS:** Twilio (enabled on the deployed backend)
 - **Frontend:** React + Redux Toolkit + TypeScript + Tailwind CSS (Vite)
 - **Docs:** Swagger / OpenAPI, Postman
 
@@ -95,11 +96,18 @@ All under `/api`. Send the token as `Authorization: Bearer <token>`.
 
 ### SMS notifications (Twilio)
 
-SMS is wired but stays **disabled** and only logs messages until the Twilio
-credentials are set. To turn on real SMS, set `TWILIO_ACCOUNT_SID`,
-`TWILIO_AUTH_TOKEN` and `TWILIO_FROM_NUMBER` (locally or in Render) and restart -
-the app logs `Twilio SMS enabled` on boot. Notes: a Twilio trial account can only
-text verified numbers, and phone numbers should be stored in E.164 form (`+9198...`).
+SMS is **enabled** on the deployed backend. A message is sent when a user registers,
+when a seeker applies to a job (one to the seeker and one to the employer), and when
+an employer changes the status of an application.
+
+If `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN` and `TWILIO_FROM_NUMBER` are not set the
+app still runs and only writes the message in the log, so it works without a Twilio
+account. On boot the log says `Twilio SMS enabled` or `Twilio SMS disabled`.
+
+Notes: the Twilio account is a trial account, so it can only send to phone numbers
+that are verified in Twilio. Sending to any other number fails with error 21608, and
+that failure is only written in the log so the request still finishes. Phone numbers
+should be saved in E.164 form (`+9198...`).
 
 ### Testing
 
