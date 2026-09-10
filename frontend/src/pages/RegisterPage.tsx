@@ -16,6 +16,8 @@ export default function RegisterPage() {
     phone: '',
     role: 'JOB_SEEKER' as Role,
   })
+  // to show or hide the password text
+  const [showPassword, setShowPassword] = useState(false)
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -43,14 +45,23 @@ export default function RegisterPage() {
           onChange={(e) => setForm({ ...form, email: e.target.value })}
           required
         />
-        <input
-          className="w-full border border-gray-300 rounded px-3 py-2"
-          type="password"
-          placeholder="Password (min 6 characters)"
-          value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
-          required
-        />
+        <div className="relative">
+          <input
+            className="w-full border border-gray-300 rounded px-3 py-2 pr-16"
+            type={showPassword ? 'text' : 'password'}
+            placeholder="Password (min 6 characters)"
+            value={form.password}
+            onChange={(e) => setForm({ ...form, password: e.target.value })}
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-indigo-600"
+          >
+            {showPassword ? 'Hide' : 'Show'}
+          </button>
+        </div>
         <input
           className="w-full border border-gray-300 rounded px-3 py-2"
           placeholder="Phone (e.g. +9198XXXXXXXX)"

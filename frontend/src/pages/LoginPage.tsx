@@ -10,6 +10,8 @@ export default function LoginPage() {
   const { loading, error } = useAppSelector((s) => s.auth)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  // to show or hide the password text
+  const [showPassword, setShowPassword] = useState(false)
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -30,14 +32,23 @@ export default function LoginPage() {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <input
-          className="w-full border border-gray-300 rounded px-3 py-2"
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+        <div className="relative">
+          <input
+            className="w-full border border-gray-300 rounded px-3 py-2 pr-16"
+            type={showPassword ? 'text' : 'password'}
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-indigo-600"
+          >
+            {showPassword ? 'Hide' : 'Show'}
+          </button>
+        </div>
         <button
           disabled={loading}
           className="w-full bg-indigo-600 text-white py-2 rounded disabled:opacity-60"
