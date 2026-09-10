@@ -11,8 +11,11 @@ application status change).
 
 ## Deployment URLs
 
-- Backend API: **TBD (added after deployment to Render)**
-- Frontend: **TBD (added after deployment to Vercel/Netlify)**
+- Backend API: https://employers-and-job-seekers-platform.onrender.com
+- Frontend: https://employers-and-job-seekers-platform.vercel.app
+
+The backend is on the Render free plan, so if nobody used it for some time the first
+request can take about a minute to start. After that it is fast.
 
 ## Tech Stack
 
