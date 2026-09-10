@@ -13,6 +13,7 @@ application status change).
 
 - Backend API: https://employers-and-job-seekers-platform.onrender.com
 - Frontend: https://employers-and-job-seekers-platform.vercel.app
+- API docs (Swagger): https://employers-and-job-seekers-platform.onrender.com/swagger-ui.html
 
 The backend is on the Render free plan, so if nobody used it for some time the first
 request can take about a minute to start. After that it is fast.
@@ -102,7 +103,9 @@ text verified numbers, and phone numbers should be stored in E.164 form (`+9198.
 
 ### Testing
 
-- Swagger UI at `/swagger-ui.html` (Authorize with your token).
+- Swagger UI (live): https://employers-and-job-seekers-platform.onrender.com/swagger-ui.html
+  Click Authorize and paste your token. If you run the project on your own
+  machine it is at http://localhost:8080/swagger-ui.html instead.
 - Postman: import `CareerNest.postman_collection.json`. Run Register Employer and
   Register Seeker first to capture the two role tokens.
 
